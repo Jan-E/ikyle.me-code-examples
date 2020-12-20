@@ -38,6 +38,52 @@
 	[selectButton addTarget:self action:@selector(selectPressed:) forControlEvents:UIControlEventTouchUpInside];
 	[selectButton sizeToFit];
 	[self.view addSubview:selectButton];
+    
+    NSError *error = nil;
+    NSFileManager *filemgr = [NSFileManager defaultManager];
+    NSArray *filelist;
+    NSString *fileName;
+    NSString *thumbName;
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
+    NSURL *libraryURL = [[filemgr URLsForDirectory:NSLibraryDirectory inDomains:NSUserDomainMask] lastObject];
+    long long librarySize = 0;
+    float recordingDuration = 0;
+    filemgr =[NSFileManager defaultManager];
+    filelist = [filemgr contentsOfDirectoryAtPath:paths[0] error:&error];
+    librarySize = [filelist count];
+    NSLog(@"library files: %lld", librarySize);
+    int i;
+    for (i = 0; i < librarySize; i++) {
+        fileName = [filelist objectAtIndex: i];
+        NSURL *fileURL = [libraryURL URLByAppendingPathComponent:fileName];
+        NSDictionary *fileAttributes = [[NSFileManager defaultManager] attributesOfItemAtPath:fileURL.path error:nil];
+        NSNumber *fileSizeNumber = [fileAttributes objectForKey:NSFileSize];
+        NSDate *fileDate = [fileAttributes objectForKey:NSFileCreationDate];
+        if ([fileName containsString:@".mov"]) {
+            // imported videos
+            AVURLAsset *avUrl = [AVURLAsset assetWithURL:fileURL];
+            CMTime time = [avUrl duration];
+            recordingDuration = time.value/time.timescale;
+            NSLog(@"%@ size %@ date %@ url %@ duration %f", fileName, fileSizeNumber, fileDate, fileURL, recordingDuration);
+            thumbName = [fileName stringByReplacingOccurrencesOfString:@".mov" withString:@""];
+            NSURL *thumbURL = [libraryURL URLByAppendingPathComponent:thumbName];
+            NSString *thumbPath = [thumbURL path];
+            if ([filemgr fileExistsAtPath:thumbPath]) {
+                NSDictionary *thumbAttributes = [[NSFileManager defaultManager] attributesOfItemAtPath:thumbURL.path error:nil];
+                NSNumber *thumbSizeNumber = [thumbAttributes objectForKey:NSFileSize];
+                NSDate *thumbDate = [thumbAttributes objectForKey:NSFileCreationDate];
+                NSLog(@"thumb %@ size %@ date %@ url %@", thumbName, thumbSizeNumber, thumbDate, thumbURL);
+                // clean up on app load
+                [filemgr removeItemAtPath:thumbPath error:nil];
+            }
+            NSString *filePath = [fileURL path];
+            if ([filemgr fileExistsAtPath:filePath]) {
+                NSLog(@"file %@ exists %f", filePath, recordingDuration);
+                // clean up on app load
+                [filemgr removeItemAtPath:filePath error:nil];
+            }
+        }
+    }
 }
 
 -(void)viewDidLayoutSubviews{
@@ -227,14 +273,16 @@
                                 } else {
                                     NSLog(@"Thumbnail generated %@", recordingKey);
                                     dispatch_async(dispatch_get_main_queue(), ^{
+                                        UIImage *thumbImage = [UIImage imageWithCGImage:im];
+                                        NSData *data = UIImageJPEGRepresentation(thumbImage, 0.5);
+                                        [data writeToFile:thumbURL.path atomically:YES];
+                                        NSLog(@"thumb UIImage: %@", thumbImage);
+                                        UIImageView *imageView = [self newImageViewForImage:thumbImage];
+                                        [self->imageViews addObject:imageView];
+                                        [self->scrollView addSubview:imageView];
+                                        [self.view setNeedsLayout];
                                         if (![[NSFileManager defaultManager] fileExistsAtPath:thumbURL.path]) {
-                                            NSLog(@"thumbURL %@", thumbURL);
-                                            UIImage *thumbImage = [UIImage imageWithCGImage:im];
-                                            NSLog(@"thumb UIImage: %@", thumbImage);
-                                            UIImageView *imageView = [self newImageViewForImage:thumbImage];
-                                            [self->imageViews addObject:imageView];
-                                            [self->scrollView addSubview:imageView];
-                                            [self.view setNeedsLayout];
+                                            NSLog(@"thumb does not exist ?? %@", thumbURL);
                                         }
                                     });
                                 }
