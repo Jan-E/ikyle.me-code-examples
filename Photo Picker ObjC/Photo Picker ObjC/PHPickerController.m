@@ -159,10 +159,10 @@
 -(void)picker:(PHPickerViewController *)picker didFinishPicking:(NSArray<PHPickerResult *> *)results{
 	NSLog(@"-picker:%@ didFinishPicking:%@", picker, results);
 	
-	[self clearImageViews];
-	[picker dismissViewControllerAnimated:YES completion:nil];
-	
-	for (PHPickerResult *result in results) {
+    [self clearImageViews];
+    [picker dismissViewControllerAnimated:YES completion:nil];
+    
+    for (PHPickerResult *result in results) {
         NSLog(@"result: %@", result);
         // 2020-12-20 03:03:03.468064+0100 Photo Picker ObjC[12542:1871998] result: <PHPickerResult: 0x282f29080>
         NSLog(@"result.assetIdentifier: %@", result.assetIdentifier);
@@ -303,7 +303,7 @@
                 }
             }
         }];
-	}
+    }
 }
 
 - (void)requestAuthorizationToPhotos {
