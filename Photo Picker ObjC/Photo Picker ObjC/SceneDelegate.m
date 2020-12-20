@@ -6,7 +6,7 @@
 //
 
 #import "SceneDelegate.h"
-#import "ViewController.h"
+#import "PHPickerController.h"
 
 @interface SceneDelegate ()
 

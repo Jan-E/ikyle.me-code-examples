@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		CC946E0124A187DF003E0AE1 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = CC946E0024A187DF003E0AE1 /* AppDelegate.m */; };
 		CC946E0424A187DF003E0AE1 /* SceneDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = CC946E0324A187DF003E0AE1 /* SceneDelegate.m */; };
-		CC946E0724A187DF003E0AE1 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CC946E0624A187DF003E0AE1 /* ViewController.m */; };
+		CC946E0724A187DF003E0AE1 /* PHPickerController.m in Sources */ = {isa = PBXBuildFile; fileRef = CC946E0624A187DF003E0AE1 /* PHPickerController.m */; };
 		CC946E0C24A187E1003E0AE1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CC946E0B24A187E1003E0AE1 /* Assets.xcassets */; };
 		CC946E0F24A187E1003E0AE1 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CC946E0D24A187E1003E0AE1 /* LaunchScreen.storyboard */; };
 		CC946E1224A187E1003E0AE1 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = CC946E1124A187E1003E0AE1 /* main.m */; };
@@ -21,8 +21,8 @@
 		CC946E0024A187DF003E0AE1 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		CC946E0224A187DF003E0AE1 /* SceneDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SceneDelegate.h; sourceTree = "<group>"; };
 		CC946E0324A187DF003E0AE1 /* SceneDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SceneDelegate.m; sourceTree = "<group>"; };
-		CC946E0524A187DF003E0AE1 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		CC946E0624A187DF003E0AE1 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		CC946E0524A187DF003E0AE1 /* PHPickerController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PHPickerController.h; sourceTree = "<group>"; };
+		CC946E0624A187DF003E0AE1 /* PHPickerController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PHPickerController.m; sourceTree = "<group>"; };
 		CC946E0B24A187E1003E0AE1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		CC946E0E24A187E1003E0AE1 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		CC946E1024A187E1003E0AE1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -63,8 +63,8 @@
 				CC946E0024A187DF003E0AE1 /* AppDelegate.m */,
 				CC946E0224A187DF003E0AE1 /* SceneDelegate.h */,
 				CC946E0324A187DF003E0AE1 /* SceneDelegate.m */,
-				CC946E0524A187DF003E0AE1 /* ViewController.h */,
-				CC946E0624A187DF003E0AE1 /* ViewController.m */,
+				CC946E0524A187DF003E0AE1 /* PHPickerController.h */,
+				CC946E0624A187DF003E0AE1 /* PHPickerController.m */,
 				CC946E0B24A187E1003E0AE1 /* Assets.xcassets */,
 				CC946E0D24A187E1003E0AE1 /* LaunchScreen.storyboard */,
 				CC946E1024A187E1003E0AE1 /* Info.plist */,
@@ -141,7 +141,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CC946E0724A187DF003E0AE1 /* ViewController.m in Sources */,
+				CC946E0724A187DF003E0AE1 /* PHPickerController.m in Sources */,
 				CC946E0124A187DF003E0AE1 /* AppDelegate.m in Sources */,
 				CC946E1224A187E1003E0AE1 /* main.m in Sources */,
 				CC946E0424A187DF003E0AE1 /* SceneDelegate.m in Sources */,
@@ -280,7 +280,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = NFTL2336WY;
+				DEVELOPMENT_TEAM = 7J77685L3X;
 				INFOPLIST_FILE = "Photo Picker ObjC/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -298,7 +298,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = NFTL2336WY;
+				DEVELOPMENT_TEAM = 7J77685L3X;
 				INFOPLIST_FILE = "Photo Picker ObjC/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
