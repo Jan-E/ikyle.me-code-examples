@@ -15,30 +15,30 @@
 @end
 
 @implementation ViewController{
-	UIScrollView *scrollView;
-	NSMutableArray <UIImageView*>* imageViews;
-	UIButton *selectButton;
+    UIScrollView *scrollView;
+    NSMutableArray <UIImageView*>* imageViews;
+    UIButton *selectButton;
 }
 
 - (void)viewDidLoad {
-	[super viewDidLoad];
-	
-	self.view.backgroundColor = [UIColor whiteColor];
-	
-	imageViews = [NSMutableArray array];
-	
-	// Create ScrollView
-	scrollView = [[UIScrollView alloc] init];
-	scrollView.backgroundColor = [UIColor colorWithWhite:0.90 alpha:1];
-	[self.view addSubview:scrollView];
-	
-	// Select Photos Button
-	selectButton = [UIButton buttonWithType:UIButtonTypeSystem];
-	[selectButton setTitle:@"Picker" forState:UIControlStateNormal];
-	[selectButton addTarget:self action:@selector(selectPressed:) forControlEvents:UIControlEventTouchUpInside];
-	[selectButton sizeToFit];
-	[self.view addSubview:selectButton];
+    [super viewDidLoad];
     
+    self.view.backgroundColor = [UIColor whiteColor];
+    
+    imageViews = [NSMutableArray array];
+    
+    // Create ScrollView
+    scrollView = [[UIScrollView alloc] init];
+    scrollView.backgroundColor = [UIColor colorWithWhite:0.90 alpha:1];
+    [self.view addSubview:scrollView];
+    
+    // Select Photos Button
+    selectButton = [UIButton buttonWithType:UIButtonTypeSystem];
+    [selectButton setTitle:@"Picker" forState:UIControlStateNormal];
+    [selectButton addTarget:self action:@selector(selectPressed:) forControlEvents:UIControlEventTouchUpInside];
+    [selectButton sizeToFit];
+    [self.view addSubview:selectButton];
+
     // Handle the app's library of videos
     NSError *error = nil;
     NSFileManager *filemgr = [NSFileManager defaultManager];
@@ -88,72 +88,72 @@
 }
 
 -(void)viewDidLayoutSubviews{
-	[super viewDidLayoutSubviews];
-	const CGSize size = self.view.bounds.size;
-	const UIEdgeInsets safeArea = self.view.safeAreaInsets;
-	
-	selectButton.frame = ({
-		CGRect frame = CGRectZero;
-		frame.size.width = MIN(size.width - 10, 250);
-		frame.size.height = 40;
-		frame.origin.y = size.height - (frame.size.height + 10 + safeArea.bottom);
-		frame.origin.x = (size.width - frame.size.width) * 0.5;
-		frame;
-	});
-	
-	scrollView.frame = ({
-		CGRect frame = CGRectZero;
-		frame.origin.y = safeArea.top + 10;
-		frame.size.height = (selectButton.frame.origin.y - 10) - frame.origin.y;
-		frame.size.width = size.width - 20;
-		frame.origin.x = (size.width - frame.size.width) * 0.5;
-		frame;
-	});
-	
-	CGFloat y = 10;
-	for (NSInteger i = 0; i < imageViews.count; i++) {
-		UIImageView *imageView = imageViews[i];
-		imageView.frame = ({
-			CGRect frame = CGRectZero;
-			frame.origin.y = y;
-			frame.size.width = MIN(scrollView.bounds.size.width - 20, 300);
-			frame.origin.x = (scrollView.bounds.size.width - frame.size.width) * 0.5;
-			frame.size.height = MIN(frame.size.width * 0.75, 250);
-			y += frame.size.height + 10;
-			frame;
-		});
-	}
-	scrollView.contentSize = CGSizeMake(0, y);
+    [super viewDidLayoutSubviews];
+    const CGSize size = self.view.bounds.size;
+    const UIEdgeInsets safeArea = self.view.safeAreaInsets;
+    
+    selectButton.frame = ({
+        CGRect frame = CGRectZero;
+        frame.size.width = MIN(size.width - 10, 250);
+        frame.size.height = 40;
+        frame.origin.y = size.height - (frame.size.height + 10 + safeArea.bottom);
+        frame.origin.x = (size.width - frame.size.width) * 0.5;
+        frame;
+    });
+    
+    scrollView.frame = ({
+        CGRect frame = CGRectZero;
+        frame.origin.y = safeArea.top + 10;
+        frame.size.height = (selectButton.frame.origin.y - 10) - frame.origin.y;
+        frame.size.width = size.width - 20;
+        frame.origin.x = (size.width - frame.size.width) * 0.5;
+        frame;
+    });
+
+    CGFloat y = 10;
+    for (NSInteger i = 0; i < imageViews.count; i++) {
+        UIImageView *imageView = imageViews[i];
+        imageView.frame = ({
+            CGRect frame = CGRectZero;
+            frame.origin.y = y;
+            frame.size.width = MIN(scrollView.bounds.size.width - 20, 300);
+            frame.origin.x = (scrollView.bounds.size.width - frame.size.width) * 0.5;
+            frame.size.height = MIN(frame.size.width * 0.75, 250);
+            y += frame.size.height + 10;
+            frame;
+        });
+    }
+    scrollView.contentSize = CGSizeMake(0, y);
 }
 
 #pragma mark Helpers
 
 -(UIImageView*)newImageViewForImage:(UIImage*)image{
-	UIImageView *imageView = [[UIImageView alloc] init];
-	imageView.contentMode = UIViewContentModeScaleAspectFit;
-	imageView.backgroundColor = [UIColor blackColor];
-	imageView.image = image;
-	return imageView;
+    UIImageView *imageView = [[UIImageView alloc] init];
+    imageView.contentMode = UIViewContentModeScaleAspectFit;
+    imageView.backgroundColor = [UIColor blackColor];
+    imageView.image = image;
+    return imageView;
 }
 
 -(void)clearImageViews{
-	for (UIImageView *imageView in imageViews) {
-		[imageView removeFromSuperview];
-	}
-	[imageViews removeAllObjects];
+    for (UIImageView *imageView in imageViews) {
+        [imageView removeFromSuperview];
+    }
+    [imageViews removeAllObjects];
 }
 
 #pragma mark - PHPicker
 
 -(void)selectPressed:(id)sender{
     [self requestAuthorizationToPhotos];
-	PHPickerConfiguration *config = [[PHPickerConfiguration alloc] init];
-	config.selectionLimit = 1;
-	config.filter = [PHPickerFilter videosFilter];
-	
-	PHPickerViewController *pickerViewController = [[PHPickerViewController alloc] initWithConfiguration:config];
-	pickerViewController.delegate = self;
-	[self presentViewController:pickerViewController animated:YES completion:nil];
+    PHPickerConfiguration *config = [[PHPickerConfiguration alloc] init];
+    config.selectionLimit = 1;
+    config.filter = [PHPickerFilter videosFilter];
+    
+    PHPickerViewController *pickerViewController = [[PHPickerViewController alloc] initWithConfiguration:config];
+    pickerViewController.delegate = self;
+    [self presentViewController:pickerViewController animated:YES completion:nil];
 }
 
 -(void)picker:(PHPickerViewController *)picker didFinishPicking:(NSArray<PHPickerResult *> *)results{
@@ -163,11 +163,11 @@
 	[picker dismissViewControllerAnimated:YES completion:nil];
 	
 	for (PHPickerResult *result in results) {
-		NSLog(@"result: %@", result);
+        NSLog(@"result: %@", result);
         // 2020-12-20 03:03:03.468064+0100 Photo Picker ObjC[12542:1871998] result: <PHPickerResult: 0x282f29080>
-		NSLog(@"result.assetIdentifier: %@", result.assetIdentifier);
+        NSLog(@"result.assetIdentifier: %@", result.assetIdentifier);
         // 2020-12-20 03:03:03.468123+0100 Photo Picker ObjC[12542:1871998] result.assetIdentifier: (null)
-		NSLog(@"result.itemProvider: %@", result.itemProvider);
+        NSLog(@"result.itemProvider: %@", result.itemProvider);
         // 2020-12-20 03:03:03.468212+0100 Photo Picker ObjC[12542:1871998] result.itemProvider: <NSItemProvider: 0x28041dea0> {types = ( "public.mpeg-4" )}
 
         [result.itemProvider loadFileRepresentationForTypeIdentifier:(NSString *)kUTTypeMovie completionHandler:^(id item, NSError *error) {
@@ -188,7 +188,9 @@
             NSString *fileName;
             // imported filename would be something like IMG_0409.mov: do not use
             // fileName = [[inputFilePath lastPathComponent] stringByDeletingPathExtension];
-            // mimic the filenames used by UIImagePickerController
+            NSString *inputFileName;
+            inputFileName = [inputFilePath lastPathComponent];
+            // mimic the filenames used by UIImagePickerController for imported filename
             fileName = @"trim.";
             fileName = [fileName stringByAppendingString:uuidString];
             fileName = [fileName stringByAppendingString:@".mov"];
@@ -209,7 +211,7 @@
                     [filemgr removeItemAtPath:outputFilePath error:nil];
                 }
                 if (![filemgr fileExistsAtPath:outputFilePath]) {
-                    NSLog(@"copy %@ from camera roll to library", fileName);
+                    NSLog(@"copy %@ from camera roll to library as %@", inputFileName, fileName);
                     if([filemgr copyItemAtPath:inputFilePath toPath:outputFilePath error:&error]) {
                         unsigned long long fileSize = [[[NSFileManager defaultManager] attributesOfItemAtPath:outputFilePath error:nil] fileSize];
                         NSLog(@"%@ copied, size %llu", outputFilePath, fileSize);
