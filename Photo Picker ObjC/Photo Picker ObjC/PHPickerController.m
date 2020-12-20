@@ -39,6 +39,7 @@
 	[selectButton sizeToFit];
 	[self.view addSubview:selectButton];
     
+    // Handle the app's library of videos
     NSError *error = nil;
     NSFileManager *filemgr = [NSFileManager defaultManager];
     NSArray *filelist;
@@ -73,13 +74,13 @@
                 NSNumber *thumbSizeNumber = [thumbAttributes objectForKey:NSFileSize];
                 NSDate *thumbDate = [thumbAttributes objectForKey:NSFileCreationDate];
                 NSLog(@"thumb %@ size %@ date %@ url %@", thumbName, thumbSizeNumber, thumbDate, thumbURL);
-                // clean up on app load
+                // clean up on app load for demonstration purposes
                 [filemgr removeItemAtPath:thumbPath error:nil];
             }
             NSString *filePath = [fileURL path];
             if ([filemgr fileExistsAtPath:filePath]) {
-                NSLog(@"file %@ exists %f", filePath, recordingDuration);
-                // clean up on app load
+                NSLog(@"file %@ existed, duration %f", filePath, recordingDuration);
+                // clean up on app load for demonstration purposes
                 [filemgr removeItemAtPath:filePath error:nil];
             }
         }
@@ -170,7 +171,7 @@
         // 2020-12-20 03:03:03.468212+0100 Photo Picker ObjC[12542:1871998] result.itemProvider: <NSItemProvider: 0x28041dea0> {types = ( "public.mpeg-4" )}
 
         [result.itemProvider loadFileRepresentationForTypeIdentifier:(NSString *)kUTTypeMovie completionHandler:^(id item, NSError *error) {
-            // First time you pick a video: [ERROR] Could not create a bookmark: NSError: Cocoa 257 "The file couldn’t be opened because you don’t have permission to view it." }
+            // First time you pick a video it sometimes (?) errors: [ERROR] Could not create a bookmark: NSError: Cocoa 257 "The file couldn’t be opened because you don’t have permission to view it." }
             NSLog(@"item: %@", item);
             // 2020-12-20 03:03:03.755649+0100 Photo Picker ObjC[12542:1872028] item: file:///private/var/mobile/Containers/Data/Application/6BB518A0-927A-4723-B886-E684B60EE489/tmp/.com.apple.Foundation.NSItemProvider.oA0J1x/IMG_0409.mp4
             NSLog(@"item class: %@", [item class]);
@@ -183,7 +184,13 @@
             unsigned long long fileSize;
             NSFileManager *filemgr = [NSFileManager defaultManager];
             NSString *inputFilePath = [videoURL path];
-            NSString *fileName = [[inputFilePath lastPathComponent] stringByDeletingPathExtension];
+            NSString *uuidString = [[NSUUID UUID] UUIDString];
+            NSString *fileName;
+            // imported filename would be something like IMG_0409.mov: do not use
+            // fileName = [[inputFilePath lastPathComponent] stringByDeletingPathExtension];
+            // mimic the filenames used by UIImagePickerController
+            fileName = @"trim.";
+            fileName = [fileName stringByAppendingString:uuidString];
             fileName = [fileName stringByAppendingString:@".mov"];
             NSURL *libraryURL = [[[NSFileManager defaultManager] URLsForDirectory:NSLibraryDirectory inDomains:NSUserDomainMask] lastObject];
             NSURL *outputFileURL = [libraryURL URLByAppendingPathComponent:fileName];
@@ -198,7 +205,7 @@
                 if ([filemgr fileExistsAtPath:outputFilePath]) {
                     fileSize = [[[NSFileManager defaultManager] attributesOfItemAtPath:outputFilePath error:nil] fileSize];
                     NSLog(@"outputFilePath %@ exists (%llu)", outputFilePath, fileSize);
-                    // remove and regenerate
+                    // remove and regenerate every time for demonstration purposes
                     [filemgr removeItemAtPath:outputFilePath error:nil];
                 }
                 if (![filemgr fileExistsAtPath:outputFilePath]) {
@@ -215,8 +222,6 @@
                         [fileManager setAttributes:creationDateAttr ofItemAtPath:outputFilePath error:&error];
                         // NSNumber *fileSizeNumber = [fileAttributes objectForKey:NSFileSize];
                         NSString *recordingKey = [fileName stringByReplacingOccurrencesOfString:@".mov" withString:@""];
-                        NSURL *thumbURL = [libraryURL URLByAppendingPathComponent:recordingKey];
-                        // create new recording
                         AVURLAsset *avUrl = [AVURLAsset assetWithURL:outputFileURL];
                         CMTime time = [avUrl duration];
                         float recordingDuration;
@@ -226,30 +231,27 @@
                         if (tracks.count >= 1) {
                             AVAssetTrack *track = [tracks objectAtIndex:0];
                             UIImageOrientation AssetOrientation_ = UIImageOrientationUp;
-                            BOOL isAssetPortrait_ = NO;
                             BOOL isAssetTilted = false;
                             CGAffineTransform thisTransform = track.preferredTransform;
                             if(thisTransform.a == 0 && thisTransform.b == 1.0 && thisTransform.c == -1.0 && thisTransform.d == 0)  {
                                 // Orientation 90 degrees, used for iOS screen recording in landscape
                                 AssetOrientation_ = UIImageOrientationRight;
-                                isAssetPortrait_ = YES;
                                 isAssetTilted = true;
-                                NSLog(@"Video %@ %ld %s, portrait %d", fileName,  (long)AssetOrientation_, "UIImageOrientationRight", isAssetPortrait_);
+                                NSLog(@"Video %@ %ld %s", fileName,  (long)AssetOrientation_, "UIImageOrientationRight");
                             }
                             if(thisTransform.a == 0 && thisTransform.b == -1.0 && thisTransform.c == 1.0 && thisTransform.d == 0) {
                                 // Orientation 270 degrees, used for iOS screen recording in landscape
                                 AssetOrientation_ =  UIImageOrientationLeft;
-                                isAssetPortrait_ = YES;
                                 isAssetTilted = true;
-                                NSLog(@"Video %@ %ld %s, portrait %d", fileName, (long)AssetOrientation_, "UIImageOrientationLeft", isAssetPortrait_);
+                                NSLog(@"Video %@ %ld %s", fileName, (long)AssetOrientation_, "UIImageOrientationLeft");
                             }
                             if(thisTransform.a == 1.0 && thisTransform.b == 0 && thisTransform.c == 0 && thisTransform.d == 1.0) {
                                 AssetOrientation_ =  UIImageOrientationUp;
-                                NSLog(@"Video %@ %ld %s, portrait %d", fileName, (long)AssetOrientation_, "UIImageOrientationUp", isAssetPortrait_);
+                                NSLog(@"Video %@ %ld %s", fileName, (long)AssetOrientation_, "UIImageOrientationUp");
                             }
                             if(thisTransform.a == -1.0 && thisTransform.b == 0 && thisTransform.c == 0 && thisTransform.d == -1.0) {
                                 AssetOrientation_ = UIImageOrientationDown;
-                                NSLog(@"Video %@ %ld %s, portrait %d", fileName, (long)AssetOrientation_, "UIImageOrientationDown", isAssetPortrait_);
+                                NSLog(@"Video %@ %ld %s", fileName, (long)AssetOrientation_, "UIImageOrientationDown");
                             }
                             CGSize mediaSize = track.naturalSize;
                             int recordingWidth;
@@ -265,6 +267,8 @@
                             AVURLAsset *asset=[[AVURLAsset alloc] initWithURL:outputFileURL options:nil];
                             AVAssetImageGenerator *generator = [[AVAssetImageGenerator alloc] initWithAsset:asset];
                             [generator setAppliesPreferredTrackTransform:YES];
+                            // filename of the thumb = filename of imported video without ".mov"
+                            NSURL *thumbURL = [libraryURL URLByAppendingPathComponent:recordingKey];
                             CMTime thumbTime = CMTimeMakeWithSeconds(1.0, 1);
                             
                             AVAssetImageGeneratorCompletionHandler handler = ^(CMTime requestedTime, CGImageRef im, CMTime actualTime, AVAssetImageGeneratorResult result, NSError *error){
