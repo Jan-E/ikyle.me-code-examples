@@ -157,8 +157,8 @@
 }
 
 -(void)picker:(PHPickerViewController *)picker didFinishPicking:(NSArray<PHPickerResult *> *)results{
-	NSLog(@"-picker:%@ didFinishPicking:%@", picker, results);
-	
+    NSLog(@"-picker:%@ didFinishPicking:%@", picker, results);
+
     [self clearImageViews];
     [picker dismissViewControllerAnimated:YES completion:nil];
     
