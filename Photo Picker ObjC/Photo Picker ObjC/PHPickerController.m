@@ -94,7 +94,7 @@
 	selectButton.frame = ({
 		CGRect frame = CGRectZero;
 		frame.size.width = MIN(size.width - 10, 250);
-		frame.size.height = 20;
+		frame.size.height = 40;
 		frame.origin.y = size.height - (frame.size.height + 10 + safeArea.bottom);
 		frame.origin.x = (size.width - frame.size.width) * 0.5;
 		frame;
