@@ -272,35 +272,11 @@
                                     NSLog(@"couldn't generate thumbnail, error:%@", error);
                                 } else {
                                     NSLog(@"Thumbnail generated %@", recordingKey);
+                                    UIImage *thumbImage = [UIImage imageWithCGImage:im];
+                                    NSData *data = UIImageJPEGRepresentation(thumbImage, 0.5);
+                                    [data writeToFile:thumbURL.path atomically:YES];
+                                    NSLog(@"thumb UIImage: %@", thumbImage);
                                     dispatch_async(dispatch_get_main_queue(), ^{
-                                        UIImage *thumbImage = [UIImage imageWithCGImage:im];
-                                        NSData *data = UIImageJPEGRepresentation(thumbImage, 0.5);
-                                        /*
-                                         Sometimes crashes on previous line
-                                         
-                                         Thread 1: EXC_BREAKPOINT (code=1, subcode=0x1caf8bdc8)
-                                          
-                                         2020-12-20 13:19:42.196077+0100 Photo Picker ObjC[14935:2189021] Thumbnail generated IMG_0105
-                                         objc[14935]: Lazily named class 0x16d4928b0 wasn't named by lazy name handler
-                                         objc[14935]: Lazily named class 0x16d4928b0 wasn't named by lazy name handler
-                                         objc[14935]: Lazily named class 0x16d4928b0 wasn't named by lazy name handler
-                                         objc[14935]: Lazily named class 0x16d4928b0 wasn't named by lazy name handler
-                                         objc[14935]: Lazily named class 0x16d4928b0 wasn't named by lazy name handler
-                                         objc[14935]: Lazily named class 0x16d4928b0 wasn't named by lazy name handler
-                                         objc[14935]: Lazily named class 0x16d4928b0 wasn't named by lazy name handler
-                                         objc[14935]: Lazily named class 0x16d4928b0 wasn't named by lazy name handler
-                                         objc[14935]: Lazily named class 0x16d4928b0 wasn't named by lazy name handler
-                                         objc[14935]: Lazily named class 0x16d4928b0 wasn't named by lazy name handler
-                                         objc[14935]: Lazily named class 0x16d4928b0 wasn't named by lazy name handler
-                                         objc[14935]: Lazily named class 0x16d4928b0 wasn't named by lazy name handler
-                                         objc[14935]: Lazily named class 0x16d4928b0 wasn't named by lazy name handler
-                                         objc[14935]: Lazily named class 0x16d4928b0 wasn't named by lazy name handler
-                                         objc[14935]: Lazily named class 0x16d4928b0 wasn't named by lazy name handler
-                                         objc[14935]: Lazily named class 0x16d4928b0 wasn't named by lazy name handler
-                                         (lldb)
-                                         */
-                                        [data writeToFile:thumbURL.path atomically:YES];
-                                        NSLog(@"thumb UIImage: %@", thumbImage);
                                         UIImageView *imageView = [self newImageViewForImage:thumbImage];
                                         [self->imageViews addObject:imageView];
                                         [self->scrollView addSubview:imageView];
