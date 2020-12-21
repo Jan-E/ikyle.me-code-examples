@@ -147,7 +147,9 @@
 
 -(void)selectPressed:(id)sender{
     [self requestAuthorizationToPhotos];
-    PHPickerConfiguration *config = [[PHPickerConfiguration alloc] init];
+    // https://developer.apple.com/forums/thread/650902
+    PHPhotoLibrary *photoLibrary = [PHPhotoLibrary sharedPhotoLibrary];
+    PHPickerConfiguration *config = [[PHPickerConfiguration alloc] initWithPhotoLibrary: photoLibrary];
     config.selectionLimit = 1;
     config.filter = [PHPickerFilter videosFilter];
     
@@ -166,12 +168,11 @@
         NSLog(@"result: %@", result);
         // 2020-12-20 03:03:03.468064+0100 Photo Picker ObjC[12542:1871998] result: <PHPickerResult: 0x282f29080>
         NSLog(@"result.assetIdentifier: %@", result.assetIdentifier);
-        // 2020-12-20 03:03:03.468123+0100 Photo Picker ObjC[12542:1871998] result.assetIdentifier: (null)
+        // 2020-12-20 03:03:03.468123+0100 Photo Picker ObjC[12542:1871998] result.assetIdentifier: EB4437ED-55D5-4CAA-A210-6CF2FF32A375/L0/001
         NSLog(@"result.itemProvider: %@", result.itemProvider);
         // 2020-12-20 03:03:03.468212+0100 Photo Picker ObjC[12542:1871998] result.itemProvider: <NSItemProvider: 0x28041dea0> {types = ( "public.mpeg-4" )}
 
         [result.itemProvider loadFileRepresentationForTypeIdentifier:(NSString *)kUTTypeMovie completionHandler:^(id item, NSError *error) {
-            // First time you pick a video it sometimes (?) errors: [ERROR] Could not create a bookmark: NSError: Cocoa 257 "The file couldn’t be opened because you don’t have permission to view it." }
             NSLog(@"item: %@", item);
             // 2020-12-20 03:03:03.755649+0100 Photo Picker ObjC[12542:1872028] item: file:///private/var/mobile/Containers/Data/Application/6BB518A0-927A-4723-B886-E684B60EE489/tmp/.com.apple.Foundation.NSItemProvider.oA0J1x/IMG_0409.mp4
             NSLog(@"item class: %@", [item class]);
@@ -179,8 +180,29 @@
             
             NSURL *videoURL = item;
             NSDictionary *fileAttributes = [[NSFileManager defaultManager] attributesOfItemAtPath:videoURL.path error:nil];
+            // default fileDate, overridden if we find refAsset:
             NSDate *fileDate = [fileAttributes objectForKey:NSFileCreationDate];
-            NSLog(@"fileDate %@", fileDate);
+            NSLog(@"fileAttributes objectForKey:NSFileCreationDate %@", fileDate);
+
+            __block PHAsset *refAsset = nil;
+            NSString *refID = result.assetIdentifier;
+            NSLog(@"item: %@, item class: %@, assetIdentifier %@", item, [item class], refID);
+            // Fetch all video assets from Photos
+            PHFetchResult *assetResults = [PHAsset fetchAssetsWithMediaType:PHAssetMediaTypeVideo options:nil];
+            for (PHAsset *phAsset in assetResults){
+                NSLog(@"phAsset id = %@, type = %zd, date = %@", phAsset.localIdentifier, phAsset.mediaType, phAsset.creationDate);
+                if ([phAsset.localIdentifier containsString:refID]) {
+                    refAsset = phAsset;
+                    break;
+                }
+            }
+            if (refAsset != nil) {
+                NSLog(@"refAsset id = %@, type = %zd, date = %@", refAsset.localIdentifier, refAsset.mediaType, refAsset.creationDate);
+                // override NSFileCreationDate
+                fileDate = refAsset.creationDate;
+                NSLog(@"refAsset.creationDate %@", fileDate);
+            }
+            
             unsigned long long fileSize;
             NSFileManager *filemgr = [NSFileManager defaultManager];
             NSString *inputFilePath = [videoURL path];
