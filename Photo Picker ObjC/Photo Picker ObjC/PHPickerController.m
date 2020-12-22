@@ -220,9 +220,19 @@
                 // override NSFileCreationDate
                 fileDate = refAsset.creationDate;
                 NSLog(@"refAsset.creationDate %@", fileDate);
+                // On iPhone (1)
                 // 2020-12-22 22:36:58.320198+0100 Photo Picker ObjC[24579:3550430] NSFileCreationDate    Sat Jun 20 18:49:23 2020
                 // 2020-12-22 22:36:58.320405+0100 Photo Picker ObjC[24579:3550430] refAsset.creationDate Sat Aug 26 16:18:31 2017
-
+                // On iPad (1)
+                // 2020-12-22 22:49:36.171521+0100 Photo Picker ObjC[41187:2704718] NSFileCreationDate    Sat Aug 26 16:18:31 2017
+                // 2020-12-22 22:49:36.171608+0100 Photo Picker ObjC[41187:2704718] refAsset.creationDate Sat Aug 26 16:18:31 2017
+                
+                // On iPhone (2)
+                // 2020-12-22 22:36:42.103254+0100 Photo Picker ObjC[24579:3550243] NSFileCreationDate    Mon Apr 27 18:43:40 2020
+                // 2020-12-22 22:36:42.103296+0100 Photo Picker ObjC[24579:3550243] refAsset.creationDate Mon Apr 27 18:43:38 2020
+                // On iPad (2):
+                // 2020-12-22 22:49:15.463148+0100 Photo Picker ObjC[41187:2704659] NSFileCreationDate    Mon Apr 27 18:44:56 2020
+                // 2020-12-22 22:49:15.463237+0100 Photo Picker ObjC[41187:2704659] refAsset.creationDate Mon Apr 27 18:43:38 2020
             } else {
                 NSLog(@"No PHAsset with id = %@ found. Is Photos access enabled?", refID);
             }
