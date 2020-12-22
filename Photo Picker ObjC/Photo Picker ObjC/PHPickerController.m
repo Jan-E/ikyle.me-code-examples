@@ -216,9 +216,13 @@
             }
             if (refAsset != nil) {
                 NSLog(@"refAsset id = %@, type = %zd, date = %@", refAsset.localIdentifier, refAsset.mediaType, refAsset.creationDate);
+                NSLog(@"NSFileCreationDate    %@", fileDate);
                 // override NSFileCreationDate
                 fileDate = refAsset.creationDate;
                 NSLog(@"refAsset.creationDate %@", fileDate);
+                // 2020-12-22 22:36:58.320198+0100 Photo Picker ObjC[24579:3550430] NSFileCreationDate    Sat Jun 20 18:49:23 2020
+                // 2020-12-22 22:36:58.320405+0100 Photo Picker ObjC[24579:3550430] refAsset.creationDate Sat Aug 26 16:18:31 2017
+
             } else {
                 NSLog(@"No PHAsset with id = %@ found. Is Photos access enabled?", refID);
             }
