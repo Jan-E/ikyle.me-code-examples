@@ -146,6 +146,8 @@
 #pragma mark - PHPicker
 
 -(void)selectPressed:(id)sender{
+    // This is needed to access the creation date in the Photos library
+    // If we wait for the built-in detection the first import might have the wrong date
     [self requestAuthorizationToPhotos];
     // https://developer.apple.com/forums/thread/650902
     PHPhotoLibrary *photoLibrary = [PHPhotoLibrary sharedPhotoLibrary];
