@@ -201,8 +201,10 @@
                 // override NSFileCreationDate
                 fileDate = refAsset.creationDate;
                 NSLog(@"refAsset.creationDate %@", fileDate);
+            } else {
+                NSLog(@"No PHAsset with id = %@ found.", refID);
             }
-            
+
             unsigned long long fileSize;
             NSFileManager *filemgr = [NSFileManager defaultManager];
             NSString *inputFilePath = [videoURL path];
