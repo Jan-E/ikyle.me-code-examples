@@ -187,13 +187,29 @@
             __block PHAsset *refAsset = nil;
             NSString *refID = result.assetIdentifier;
             NSLog(@"item: %@, item class: %@, assetIdentifier %@", item, [item class], refID);
-            // Fetch all video assets from Photos
-            PHFetchResult *assetResults = [PHAsset fetchAssetsWithMediaType:PHAssetMediaTypeVideo options:nil];
+            NSArray *refIDs = @[refID];
+            PHFetchResult *assetResults;
+            // Fetch the (single) asset with refID from Photos
+            assetResults = [PHAsset fetchAssetsWithLocalIdentifiers:refIDs options:nil];
+            NSLog(@"assetResults = %@", assetResults);
+            // This sometimes fails: https://stackoverflow.com/q/42848260/872051
             for (PHAsset *phAsset in assetResults){
                 NSLog(@"phAsset id = %@, type = %zd, date = %@", phAsset.localIdentifier, phAsset.mediaType, phAsset.creationDate);
                 if ([phAsset.localIdentifier containsString:refID]) {
                     refAsset = phAsset;
                     break;
+                }
+            }
+            if (refAsset == nil) {
+                // Fall-back solution: loop through all video assets from Photos
+                assetResults = [PHAsset fetchAssetsWithMediaType:PHAssetMediaTypeVideo options:nil];
+                NSLog(@"new assetResults = %@", assetResults);
+                for (PHAsset *phAsset in assetResults){
+                    NSLog(@"phAsset id = %@, type = %zd, date = %@", phAsset.localIdentifier, phAsset.mediaType, phAsset.creationDate);
+                    if ([phAsset.localIdentifier containsString:refID]) {
+                        refAsset = phAsset;
+                        break;
+                    }
                 }
             }
             if (refAsset != nil) {
@@ -202,7 +218,7 @@
                 fileDate = refAsset.creationDate;
                 NSLog(@"refAsset.creationDate %@", fileDate);
             } else {
-                NSLog(@"No PHAsset with id = %@ found.", refID);
+                NSLog(@"No PHAsset with id = %@ found. Is Photos access enabled?", refID);
             }
 
             unsigned long long fileSize;
@@ -227,7 +243,7 @@
             }
             if ([filemgr fileExistsAtPath:inputFilePath]) {
                 fileSize = [[[NSFileManager defaultManager] attributesOfItemAtPath:inputFilePath error:nil] fileSize];
-                NSLog(@"inputFile %@, size %llu, date %@", fileName, fileSize, fileDate);
+                NSLog(@"fileName %@, size %llu, date %@", fileName, fileSize, fileDate);
                 if ([filemgr fileExistsAtPath:outputFilePath]) {
                     fileSize = [[[NSFileManager defaultManager] attributesOfItemAtPath:outputFilePath error:nil] fileSize];
                     NSLog(@"outputFilePath %@ exists (%llu)", outputFilePath, fileSize);
