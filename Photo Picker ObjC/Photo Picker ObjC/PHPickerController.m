@@ -233,6 +233,14 @@
                 // On iPad (2):
                 // 2020-12-22 22:49:15.463148+0100 Photo Picker ObjC[41187:2704659] NSFileCreationDate    Mon Apr 27 18:44:56 2020
                 // 2020-12-22 22:49:15.463237+0100 Photo Picker ObjC[41187:2704659] refAsset.creationDate Mon Apr 27 18:43:38 2020
+                AVURLAsset *avUrl = [AVURLAsset assetWithURL:videoURL];
+                CMTime time = [avUrl duration];
+                float recordingDuration;
+                recordingDuration = time.value/time.timescale;
+                NSArray *tracks = [avUrl tracksWithMediaType:AVMediaTypeVideo];
+                // check duration and tracks to detect https://stackoverflow.com/q/64090158/872051
+                // Request AVAsset using iCloud PHAsset returns an AVAsset with no VideoTracks
+                NSLog(@"duration %f, tracks %lu", recordingDuration, (unsigned long)tracks.count);
             } else {
                 NSLog(@"No PHAsset with id = %@ found. Is Photos access enabled?", refID);
             }
