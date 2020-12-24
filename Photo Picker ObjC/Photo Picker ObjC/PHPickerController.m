@@ -173,6 +173,34 @@
         // 2020-12-20 03:03:03.468123+0100 Photo Picker ObjC[12542:1871998] result.assetIdentifier: EB4437ED-55D5-4CAA-A210-6CF2FF32A375/L0/001
         NSLog(@"result.itemProvider: %@", result.itemProvider);
         // 2020-12-20 03:03:03.468212+0100 Photo Picker ObjC[12542:1871998] result.itemProvider: <NSItemProvider: 0x28041dea0> {types = ( "public.mpeg-4" )}
+        
+        __block PHAsset *refAsset = nil;
+        NSString *refID = result.assetIdentifier;
+        NSArray *refIDs = @[refID];
+        PHFetchResult *assetResults;
+        // Fetch the (single) asset with refID from Photos
+        NSLog(@"assetIdentifier %@", refID);
+        assetResults = [PHAsset fetchAssetsWithLocalIdentifiers:refIDs options:nil];
+        NSLog(@"assetResults = %@", assetResults);
+        for (PHAsset *phAsset in assetResults) {
+            float recordingDuration = phAsset.duration;
+            NSLog(@"recordingDuration %f", recordingDuration);
+            [[PHImageManager defaultManager] requestAVAssetForVideo:phAsset
+                                                                    options:nil
+                                                              resultHandler:^(AVAsset *avAsset, AVAudioMix *audioMix, NSDictionary *info) {
+                NSURL *videoURL = (NSURL *)[[(AVURLAsset *)avAsset URL] fileReferenceURL];
+                NSLog(@"videoURL = %@", [videoURL absoluteString]);
+                NSLog(@"videoURL = %@", [videoURL relativePath]);
+                AVURLAsset *avUrl = [AVURLAsset assetWithURL:videoURL];
+                CMTime time = [avUrl duration];
+                float recordingDuration;
+                recordingDuration = time.value/time.timescale;
+                NSArray *tracks = [avUrl tracksWithMediaType:AVMediaTypeVideo];
+                // check duration and tracks to detect https://stackoverflow.com/q/64090158/872051
+                // Request AVAsset using iCloud PHAsset returns an AVAsset with no VideoTracks
+                NSLog(@"duration %f, tracks %lu", recordingDuration, (unsigned long)tracks.count);
+            }];
+        }
 
         [result.itemProvider loadFileRepresentationForTypeIdentifier:(NSString *)kUTTypeMovie completionHandler:^(id item, NSError *error) {
             NSLog(@"item: %@", item);
@@ -186,14 +214,6 @@
             NSDate *fileDate = [fileAttributes objectForKey:NSFileCreationDate];
             NSLog(@"fileAttributes objectForKey:NSFileCreationDate %@", fileDate);
 
-            __block PHAsset *refAsset = nil;
-            NSString *refID = result.assetIdentifier;
-            NSLog(@"item: %@, item class: %@, assetIdentifier %@", item, [item class], refID);
-            NSArray *refIDs = @[refID];
-            PHFetchResult *assetResults;
-            // Fetch the (single) asset with refID from Photos
-            assetResults = [PHAsset fetchAssetsWithLocalIdentifiers:refIDs options:nil];
-            NSLog(@"assetResults = %@", assetResults);
             // This sometimes fails: https://stackoverflow.com/q/42848260/872051
             for (PHAsset *phAsset in assetResults){
                 NSLog(@"phAsset id = %@, type = %zd, date = %@", phAsset.localIdentifier, phAsset.mediaType, phAsset.creationDate);
@@ -204,7 +224,7 @@
             }
             if (refAsset == nil) {
                 // Fall-back solution: loop through all video assets from Photos
-                assetResults = [PHAsset fetchAssetsWithMediaType:PHAssetMediaTypeVideo options:nil];
+                PHFetchResult *assetResults = [PHAsset fetchAssetsWithMediaType:PHAssetMediaTypeVideo options:nil];
                 NSLog(@"new assetResults = %@", assetResults);
                 for (PHAsset *phAsset in assetResults){
                     NSLog(@"phAsset id = %@, type = %zd, date = %@", phAsset.localIdentifier, phAsset.mediaType, phAsset.creationDate);
