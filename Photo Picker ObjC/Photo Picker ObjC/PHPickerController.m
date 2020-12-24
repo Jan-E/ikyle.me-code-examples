@@ -187,9 +187,13 @@
             NSLog(@"recordingDuration %f", recordingDuration);
             NSDate *PHAssetCreationDate = phAsset.creationDate;
             NSLog(@"PHAssetCreationDate %@", PHAssetCreationDate);
+            PHVideoRequestOptions *options = [[PHVideoRequestOptions alloc] init];
+            options.networkAccessAllowed = NO;
             [[PHImageManager defaultManager] requestAVAssetForVideo:phAsset
-                                                                    options:nil
+                                                                    options:options
                                                               resultHandler:^(AVAsset *avAsset, AVAudioMix *audioMix, NSDictionary *info) {
+                NSLog(@"PHImageResultIsInCloudKey %d", [info[PHImageResultIsInCloudKey] boolValue]);
+                NSLog(@"info %@", info);
                 NSURL *videoURL = (NSURL *)[[(AVURLAsset *)avAsset URL] fileReferenceURL];
                 NSLog(@"videoURL absoluteString = %@", [videoURL absoluteString]);
                 NSLog(@"videoURL relativePath   = %@", [videoURL relativePath]);
