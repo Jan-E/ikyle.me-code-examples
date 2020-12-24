@@ -185,12 +185,14 @@
         for (PHAsset *phAsset in assetResults) {
             float recordingDuration = phAsset.duration;
             NSLog(@"recordingDuration %f", recordingDuration);
+            NSDate *PHAssetCreationDate = phAsset.creationDate;
+            NSLog(@"PHAssetCreationDate %@", PHAssetCreationDate);
             [[PHImageManager defaultManager] requestAVAssetForVideo:phAsset
                                                                     options:nil
                                                               resultHandler:^(AVAsset *avAsset, AVAudioMix *audioMix, NSDictionary *info) {
                 NSURL *videoURL = (NSURL *)[[(AVURLAsset *)avAsset URL] fileReferenceURL];
-                NSLog(@"videoURL = %@", [videoURL absoluteString]);
-                NSLog(@"videoURL = %@", [videoURL relativePath]);
+                NSLog(@"videoURL absoluteString = %@", [videoURL absoluteString]);
+                NSLog(@"videoURL relativePath   = %@", [videoURL relativePath]);
                 AVURLAsset *avUrl = [AVURLAsset assetWithURL:videoURL];
                 CMTime time = [avUrl duration];
                 float recordingDuration;
