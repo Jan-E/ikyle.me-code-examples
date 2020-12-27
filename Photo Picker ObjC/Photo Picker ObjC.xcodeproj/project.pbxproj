@@ -27,6 +27,7 @@
 		CC946E0E24A187E1003E0AE1 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		CC946E1024A187E1003E0AE1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CC946E1124A187E1003E0AE1 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		F7C09AEE2599362F0079FB22 /* Photo Picker ObjC.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Photo Picker ObjC.entitlements"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -59,6 +60,7 @@
 		CC946DFE24A187DF003E0AE1 /* Photo Picker ObjC */ = {
 			isa = PBXGroup;
 			children = (
+				F7C09AEE2599362F0079FB22 /* Photo Picker ObjC.entitlements */,
 				CC946DFF24A187DF003E0AE1 /* AppDelegate.h */,
 				CC946E0024A187DF003E0AE1 /* AppDelegate.m */,
 				CC946E0224A187DF003E0AE1 /* SceneDelegate.h */,
@@ -279,6 +281,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "Photo Picker ObjC/Photo Picker ObjC.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 7J77685L3X;
 				INFOPLIST_FILE = "Photo Picker ObjC/Info.plist";
@@ -288,6 +291,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.ikyle.Photo-Picker-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -297,6 +301,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "Photo Picker ObjC/Photo Picker ObjC.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 7J77685L3X;
 				INFOPLIST_FILE = "Photo Picker ObjC/Info.plist";
@@ -306,6 +311,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.ikyle.Photo-Picker-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
